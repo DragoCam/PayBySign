@@ -1,0 +1,26 @@
+name: '${project.name}'
+version: '${project.version}'
+authors: ${authors}
+website: '${project.url}'
+main: pl.mooncube.paysign.PaySignPlugin
+api-version: '${apiVersion}'
+description: Sign payments for using redstone mechanisms.
+depend: [Vault]
+
+permissions:
+  mooncubepaysign.*:
+    description: 'Gives access to everything.'
+    default: op
+    children:
+    - mooncube.create
+    - mooncube.create.other
+    - mooncube.use
+  mooncube.create:
+    description: 'Gives access to create payment signs.'
+    default: true
+  mooncubepaysign.create.other:
+    description: 'Gives access to create payment signs for other players.'
+    default: true
+  mooncubepaysign.use:
+    description: 'Gives access to use payment signs.'
+    default: true
