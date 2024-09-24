@@ -3,17 +3,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>pl.craftserve</groupId>
-    <artifactId>pay-sign</artifactId>
-    <version>1.0</version>
-    <name>MoonCubePaySign</name>
+    <groupId>pl.lunarhost</groupId>
+    <artifactId>PayBySign</artifactId>
+    <version>1.0.0</version>
+    <name>PayBySign</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.build.timestamp.format>yyyy-MM-dd HH.mm</maven.build.timestamp.format>
-        <authors>[TheMolkaPL &lt;themolkapl@gmail.com&gt;]</authors>
+        <authors>[Drago &lt;drago.klaudiusz@gmail.com&gt;]</authors>
         <apiVersion>1.15</apiVersion>
     </properties>
 
