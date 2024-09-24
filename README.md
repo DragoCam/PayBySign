@@ -14,7 +14,7 @@
 
 The sign should look like this:
 
-[PaySign]
+[PayBySign]
 
 Player Name
 
