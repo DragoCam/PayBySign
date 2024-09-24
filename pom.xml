@@ -5,7 +5,7 @@
 
     <groupId>pl.lunarhost</groupId>
     <artifactId>PayBySign</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>PayBySign</name>
 
     <properties>
@@ -52,7 +52,6 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -66,7 +65,6 @@
             <version>1.15.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>

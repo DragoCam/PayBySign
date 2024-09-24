@@ -2,7 +2,7 @@ name: '${project.name}'
 version: '${project.version}'
 authors: ${authors}
 website: '${project.url}'
-main: pl.lunarhost.paysign.PayBySignPlugin
+main: pl.lunarhost.paysign.PaySignPlugin
 api-version: '${apiVersion}'
 description: Sign payments for using redstone mechanisms.
 depend: [Vault]
