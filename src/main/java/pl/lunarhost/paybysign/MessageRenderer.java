@@ -2,12 +2,18 @@ package pl.lunarhost.paybysign;
 
 import org.bukkit.ChatColor;
 
-/**
- * Renders different messages.
- */
 @FunctionalInterface
 public interface MessageRenderer {
-    String prefixed(String text);
+
+    String prefixed(String text); // Definicja metody prefixed
+
+    // Formatowanie wiadomości z prefiksem i sufiksem
+    default String formatMessage(String text) {
+        String messagePrefixAndSuffix = "&8«&6*&8»&8&m-------------------&8«&6*&8»&2 PyBySign &8«&6*&8»&8&m-------------------&8«&6*&8»";
+        return ChatColor.translateAlternateColorCodes('&', messagePrefixAndSuffix + "\n" + text + "\n" + messagePrefixAndSuffix);
+    }
+
+    // Metody generujące wiadomości z użyciem formatMessage
 
     default String cantDeposit() {
         return error("Could not deposit target player.");
@@ -26,7 +32,7 @@ public interface MessageRenderer {
     }
 
     default String noPermissionToCreateOther() {
-        return error("Nie masz permisji, aby utworzyć tą tabliczkę dla innych graczy.");
+        return error("Nie masz permisji, aby utworzyć tę tabliczkę dla innych graczy.");
     }
 
     default String noPermissionToUse() {
@@ -46,22 +52,18 @@ public interface MessageRenderer {
     }
 
     //
-    // Formatters
+    // Formatters for different types of messages
     //
 
     default String error(String text) {
-        return colored(text, ChatColor.RED);
+        return formatMessage(ChatColor.RED + text);
     }
 
     default String success(String text) {
-        return colored(text, ChatColor.GREEN);
+        return formatMessage(ChatColor.GREEN + text);
     }
 
     default String fine(String text) {
-        return colored(text, ChatColor.GRAY);
-    }
-
-    default String colored(String text, ChatColor color) {
-        return prefixed(color.toString() + text);
+        return formatMessage(ChatColor.GRAY + text);
     }
 }
