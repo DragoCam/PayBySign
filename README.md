@@ -1,23 +1,26 @@
-[]===========[PayBySign]==========[]
+# PayBySign
 
-| Information:
+## Features
+### Economics based on paying for redstone services.
 
-|   Name: PayBySign
+## Planned updates
 
-|   Developer: DragoCam
+## Dependencies
+### Valut
 
-| Support:
+## Permissions
+### paybysign.*
+#### Gives access to everything.
+### paybysign.create
+#### Gives access to create payment signs.
+### paybysign.create.other
+#### Gives access to create payment signs for other players.
+### paybysign.use
+#### Gives access to use payment signs.
 
-|   Github: https://github.com/DragoCam/PayBySign/Issues
-
-[]================================[]
-
-The sign should look like this:
-
-[PayBySign]
-
-Player Name
-
-Money e.g. 10
-
-Time e.g. 10 (Not required)
+## Creating a sign
+#### To create a sign you need the permission 'paybysign.create' and place a sign like so:
+### [PayBySign]
+### {Player Name}
+### {Money number}
+### {Time number}
