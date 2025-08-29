@@ -1,20 +1,4 @@
-/*
- * Copyright 2024 Klaudiusz Wojtyczka <drago.klaudiusz@gmail.com>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package pl.lunarhost.paysign;
+package net.nightzy.paysign;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -36,25 +20,43 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
 /**
- * Represents a PaySign sign.
+ * Represents a PaySign in the world.
+ * Holds data about owner, price, delay and provides logic for payment & redstone triggering.
  */
 public class PaySign {
+
+    // ============================================================
+    // Constants & Logger
+    // ============================================================
+
     static final Logger logger = Logger.getLogger(PaySign.class.getName());
 
     protected static final String NAMESPACE = "[PaySign]";
     protected static final ChatColor NAMESPACE_COLOR = ChatColor.DARK_GREEN;
 
-    private final Sign sign;
-    private final String playerName;
-    private final double price;
-    private final int delay;
+    // ============================================================
+    // Fields
+    // ============================================================
+
+    private final Sign sign;           // Sign block instance
+    private final String playerName;   // Owner of the sign
+    private final double price;        // Price to use the sign
+    private final int delay;           // Optional delay before reset (ticks)
+
+    // ============================================================
+    // Constructor
+    // ============================================================
 
     public PaySign(Sign sign, String playerName, double price, int delay) {
-        this.sign = Objects.requireNonNull(sign, "sign");
-        this.playerName = Objects.requireNonNull(playerName, "playerName");
+        this.sign = Objects.requireNonNull(sign, "sign cannot be null");
+        this.playerName = Objects.requireNonNull(playerName, "playerName cannot be null");
         this.price = price;
         this.delay = delay;
     }
+
+    // ============================================================
+    // Getters
+    // ============================================================
 
     public Sign getSign() {
         return this.sign;
@@ -64,8 +66,11 @@ public class PaySign {
         return this.playerName;
     }
 
+    /**
+     * Returns the owner of this sign if they are online.
+     */
     public Optional<Player> getOwner(Server server) {
-        Objects.requireNonNull(server, "server");
+        Objects.requireNonNull(server, "server cannot be null");
         return Optional.ofNullable(server.getPlayer(this.playerName));
     }
 
@@ -73,71 +78,109 @@ public class PaySign {
         return this.price;
     }
 
+    /**
+     * Returns the price depending on whether decimals are allowed.
+     */
     public double getPrice(boolean allowDecimals) {
         return allowDecimals ? this.price : (int) this.price;
     }
 
+    /**
+     * Returns the optional delay (in ticks) if set, otherwise empty.
+     */
     public OptionalInt getDelay() {
         return this.delay > 0 ? OptionalInt.of(this.delay) : OptionalInt.empty();
     }
 
+    // ============================================================
+    // Payment Logic
+    // ============================================================
+
+    /**
+     * Handles payment for using the PaySign.
+     *
+     * @param player the player who pays
+     * @param messageRenderer message helper for localized text
+     * @param economy the Vault economy provider
+     * @param allowDecimals whether decimals in price are allowed
+     * @return true if payment was successful, false otherwise
+     */
     public boolean pay(Player player, MessageRenderer messageRenderer, Economy economy, boolean allowDecimals) {
-        Objects.requireNonNull(player, "player");
-        Objects.requireNonNull(messageRenderer, "messageRenderer");
-        Objects.requireNonNull(economy, "economy");
+        Objects.requireNonNull(player, "player cannot be null");
+        Objects.requireNonNull(messageRenderer, "messageRenderer cannot be null");
+        Objects.requireNonNull(economy, "economy cannot be null");
 
         String worldName = player.getWorld().getName();
         double price = this.getPrice(allowDecimals);
 
+        // Free sign
         if (Double.compare(price, 0) == 0) {
-            // sign free of charge
             logger.finer("The sign is free of charge.");
             return true;
-        } else if (!economy.has(player, worldName, price)) {
-            // price cannot be negative
+        }
+
+        // Check if player can afford
+        if (!economy.has(player, worldName, price)) {
             logger.fine("The player is too poor to use this sign.");
             player.sendMessage(messageRenderer.tooPoor());
             return false;
         }
 
+        // Withdraw from player
         EconomyResponse withdraw = economy.withdrawPlayer(player, worldName, price);
         if (!withdraw.transactionSuccess()) {
-            logger.fine("Could not withdraw player.");
+            logger.fine("Could not withdraw player balance.");
             player.sendMessage(messageRenderer.error(withdraw.errorMessage));
             return false;
         }
 
+        // Deposit to owner
         EconomyResponse deposit = economy.depositPlayer(this.playerName, worldName, price);
         if (!deposit.transactionSuccess()) {
-            logger.warning("Could not deposit " + this.playerName + " player for sign at " + this.sign.getLocation());
-            economy.depositPlayer(player, worldName, price);
+            logger.warning("Could not deposit " + this.playerName +
+                           " for PaySign at " + this.sign.getLocation());
+            economy.depositPlayer(player, worldName, price); // rollback
             player.sendMessage(messageRenderer.cantDeposit());
             return false;
         }
 
+        // Notify payer
         String formattedPrice = economy.format(withdraw.amount);
         player.sendMessage(messageRenderer.paid(formattedPrice, this.playerName));
-        logger.info(player.getName() + " has paid " + formattedPrice + " for using " + this.playerName + "'s mechanism.");
+        logger.info(player.getName() + " has paid " + formattedPrice +
+                    " for using " + this.playerName + "'s mechanism.");
 
+        // Notify owner (if online)
         this.getOwner(player.getServer()).ifPresent(owner -> {
             owner.sendMessage(messageRenderer.notification(player.getName(), formattedPrice));
         });
+
         return true;
     }
 
+    // ============================================================
+    // Sign Utility Methods
+    // ============================================================
+
+    /**
+     * Gets the facing direction of the sign.
+     */
     public BlockFace getFacing() {
         BlockData blockData = this.sign.getBlock().getBlockData();
         Material material = blockData.getMaterial();
 
         if (Tag.STANDING_SIGNS.isTagged(material)) {
-            return BlockFace.UP;
+            return BlockFace.UP; // freestanding sign
         } else if (Tag.WALL_SIGNS.isTagged(material) && blockData instanceof Directional) {
-            return ((Directional) blockData).getFacing();
+            return ((Directional) blockData).getFacing(); // wall-mounted
         } else {
             throw new IllegalStateException("Invalid block material: " + material);
         }
     }
 
+    /**
+     * Gets the base block to which the sign is attached.
+     */
     public Block getBaseBlock() {
         return this.sign.getBlock().getRelative(this.getFacing().getOppositeFace());
     }

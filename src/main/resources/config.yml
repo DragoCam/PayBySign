@@ -1,4 +1,10 @@
-# Duration of ticks after which the current is going to be cut.
+# ============================================================
+# PaySign plugin configuration
+# ============================================================
+
+# Duration in ticks after which the redstone signal is reset.
+# Default: 30 ticks (same as a wooden button)
 delay: 30
-# Allow decimal numbers in prices?
+
+# Allow decimal numbers in prices (true = yes, false = only whole numbers)
 allow-decimals: true

@@ -1,26 +1,42 @@
+# ============================================================
+# PaySign plugin configuration
+# ============================================================
+
 name: '${project.name}'
 version: '${project.version}'
-authors: ${authors}
-website: '${project.url}'
-main: pl.lunarhost.paybysign.PayBySignPlugin
+main: net.nightzy.paysign.PaySignPlugin
 api-version: '${apiVersion}'
-description: Sign payments for using redstone mechanisms.
-depend: [Vault]
+authors:
+  - Drago <drago.klaudiusz@gmail.com>
+website: '${project.url}'
+description: "Sign payments for using redstone mechanisms."
+depend:
+  - Vault
 
+# ============================================================
+# Permissions
+# ============================================================
 permissions:
-  paybysign.*:
-    description: 'Gives access to everything.'
+  # Full access
+  nightzypaysign.*:
+    description: "Gives access to all PaySign commands and usage."
     default: op
     children:
-    - paybysign.create
-    - paybysign.create.other
-    - paybysign.use
-  paybysign.create:
-    description: 'Gives access to create payment signs.'
+      nightzypaysign.create: true
+      nightzypaysign.create.other: true
+      nightzypaysign.use: true
+
+  # Create your own payment signs
+  nightzypaysign.create:
+    description: "Allows creating payment signs."
     default: true
-  paybysign.create.other:
-    description: 'Gives access to create payment signs for other players.'
+
+  # Create payment signs for other players
+  nightzypaysign.create.other:
+    description: "Allows creating payment signs for other players."
     default: true
-  paybysign.use:
-    description: 'Gives access to use payment signs.'
+
+  # Use payment signs
+  nightzypaysign.use:
+    description: "Allows using payment signs."
     default: true

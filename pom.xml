@@ -1,22 +1,33 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>pl.lunarhost</groupId>
-    <artifactId>PayBySign</artifactId>
-    <version>1.5.5-beta.1</version>
-    <name>PayBySign</name>
+    <!-- ============================================================
+         Basic Project Info
+         ============================================================ -->
+    <groupId>net.nightzy</groupId>
+    <artifactId>PaySign</artifactId>
+    <version>1.0.0</version>
+    <name>PaySign</name>
 
+    <!-- ============================================================
+         Project Properties
+         ============================================================ -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.build.timestamp.format>yyyy-MM-dd HH.mm</maven.build.timestamp.format>
         <authors>[Drago &lt;drago.klaudiusz@gmail.com&gt;]</authors>
+        <project.url>https://nightzy.net</project.url>
         <apiVersion>1.15</apiVersion>
     </properties>
 
+    <!-- ============================================================
+         Build Configuration
+         ============================================================ -->
     <build>
         <resources>
             <resource>
@@ -26,10 +37,22 @@
         </resources>
 
         <plugins>
+            <!-- Compiler Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+
+            <!-- Shade Plugin for Uber-JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -47,6 +70,9 @@
         </plugins>
     </build>
 
+    <!-- ============================================================
+         Repositories
+         ============================================================ -->
     <repositories>
         <repository>
             <id>spigot-repo</id>
@@ -58,13 +84,19 @@
         </repository>
     </repositories>
 
+    <!-- ============================================================
+         Dependencies
+         ============================================================ -->
     <dependencies>
+        <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.15.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Vault API -->
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
